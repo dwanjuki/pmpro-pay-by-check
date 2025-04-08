@@ -100,9 +100,6 @@ function pmpropbc_recurring_orders() {
 			$pending_order = new MemberOrder();
 			$pending_order->user_id = $subscription->get_user_id();
 			$pending_order->membership_id = $subscription->get_membership_level_id();
-			$pending_order->total = $subscription->get_billing_amount();
-			$pending_order->subtotal = $subscription->get_billing_amount();
-			$pending_order->InitialPayment = $subscription->get_billing_amount();
 			$pending_order->PaymentAmount = $subscription->get_billing_amount();
 			$pending_order->BillingPeriod = $subscription->get_cycle_period();
 			$pending_order->BillingFrequency = $subscription->get_cycle_number();
@@ -112,6 +109,9 @@ function pmpropbc_recurring_orders() {
 			$pending_order->status = 'pending';
 			$pending_order->timestamp = $subscription->get_next_payment_date();
 			$pending_order->find_billing_address();
+			$pending_order->subtotal = $subscription->get_billing_amount();
+			$pending_order->tax = $pending_order->getTaxForPrice( $pending_order->subtotal );
+			$pending_order->total = $pending_order->subtotal + $pending_order->tax;
 
 			// Save the order.
 			$pending_order->saveOrder();
